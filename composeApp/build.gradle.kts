@@ -31,8 +31,19 @@ kotlin {
             // Koin for Dependency Injection
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.negotiation)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.logging)
+
             implementation(libs.kotlinx.coroutines.core)
+
+            implementation(libs.kotlinx.datetime)
+
+
 
         }
         commonTest.dependencies {

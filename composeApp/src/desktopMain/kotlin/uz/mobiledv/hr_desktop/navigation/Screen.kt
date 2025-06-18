@@ -14,6 +14,9 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     object Attendance : Screen("attendance", "Attendance", Icons.Default.DateRange)
     object Reports : Screen("reports", "Reports", Icons.Default.Assessment)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
+
+    object MainScreen : Screen("main", "Main", Icons.Default.Settings)
+    object LoginScreen : Screen("login", "Login", Icons.Default.Settings)
 }
 
 val mainScreens = listOf(

@@ -120,6 +120,7 @@ fun CustomReportCard() {
     val stroke = Stroke(width = 2f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     )
+    //77 051 41 21
     Box(
         Modifier
             .fillMaxWidth()

@@ -8,18 +8,42 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.navigation.Screen
 import uz.mobiledv.hr_desktop.navigation.mainScreens
 import uz.mobiledv.hr_desktop.screens.attendance.AttendanceScreen
+import uz.mobiledv.hr_desktop.screens.auth.AuthViewModel
+import uz.mobiledv.hr_desktop.screens.auth.LoginScreen
 import uz.mobiledv.hr_desktop.screens.dashboard.DashboardScreen
 import uz.mobiledv.hr_desktop.screens.employee.EmployeeScreen
 import uz.mobiledv.hr_desktop.screens.report.ReportsScreen
 import uz.mobiledv.ui.HRDesktopTheme
 
 @Composable
-fun App() {
+fun App(
+    loginViewModel: AuthViewModel = koinInject()
+) {
+
     val navController = rememberNavController()
+    val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
+
+    HRDesktopTheme {
+        if (isLoggedIn) {
+            MainScreen(navController)
+        } else {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screen.MainScreen)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun MainScreen(navController: NavHostController) {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Dashboard) }
 
     HRDesktopTheme {
