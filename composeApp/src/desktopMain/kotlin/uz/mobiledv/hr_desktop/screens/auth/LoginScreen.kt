@@ -7,11 +7,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import org.koin.compose.viewmodel.koinViewModel
+import uz.mobiledv.hr_desktop.navigation.Screen
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(
+    navController: NavHostController,
+    viewModel: AuthViewModel = koinViewModel()
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            navController.navigate(Screen.MainRoute.route) {
+                popUpTo(Screen.Login.route) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -42,7 +60,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 Button(
                     onClick = {
                         // In a real app, you'd validate here before calling onLoginSuccess
-                        onLoginSuccess()
+                        viewModel.login(username, password)
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

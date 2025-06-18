@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -43,7 +44,15 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
 
+            implementation(libs.slf4j.simple)
 
+            implementation(libs.multiplatformSettings.noArg) // Common dependency
+            implementation(libs.multiplatformSettings.coroutines) // Optional for coroutines support
+
+
+            implementation("org.apache.logging.log4j:log4j-api:2.20.0")
+            implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+            implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0") // If you use SLF4J
 
         }
         commonTest.dependencies {

@@ -7,7 +7,7 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import org.koin.compose.koinInject
@@ -22,29 +22,28 @@ import uz.mobiledv.hr_desktop.screens.report.ReportsScreen
 import uz.mobiledv.ui.HRDesktopTheme
 
 @Composable
-fun App(
-    loginViewModel: AuthViewModel = koinInject()
-) {
-
+fun App(loginViewModel: AuthViewModel = koinInject()) {
     val navController = rememberNavController()
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
 
-    HRDesktopTheme {
-        if (isLoggedIn) {
-            MainScreen(navController)
-        } else {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Screen.MainScreen)
-                }
-            )
+    NavHost(
+        navController = navController,
+        startDestination = if (isLoggedIn) Screen.MainRoute.route else Screen.AuthRoute.route
+    ) {
+        composable(Screen.AuthRoute.route) {
+            LoginScreen(navController)
+        }
+        composable(Screen.MainRoute.route) {
+            MainScreen()
         }
     }
 }
 
 @Composable
-fun MainScreen(navController: NavHostController) {
-    var currentScreen by remember { mutableStateOf<Screen>(Screen.Dashboard) }
+fun MainScreen() {
+    val navController = rememberNavController()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStackEntry?.destination?.route
 
     HRDesktopTheme {
         Row(Modifier.fillMaxSize()) {
@@ -53,13 +52,15 @@ fun MainScreen(navController: NavHostController) {
                     NavigationRailItem(
                         icon = { Icon(screen.icon, contentDescription = screen.label) },
                         label = { Text(screen.label) },
-                        selected = currentScreen.route == screen.route,
+                        selected = currentDestination == screen.route,
                         onClick = {
-                            currentScreen = screen
-                            navController.navigate(screen.route) {
-                                launchSingleTop = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                            if (currentDestination != screen.route) {
+                                navController.navigate(screen.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.startDestinationRoute ?: screen.route) {
+                                        saveState = true
+                                    }
                                 }
                             }
                         }
@@ -67,12 +68,16 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
 
-            NavHost(navController = navController, startDestination = Screen.Dashboard.route) {
-                composable(Screen.Dashboard.route) { DashboardScreen() }
-                composable(Screen.Employees.route) { EmployeeScreen() }
-                composable(Screen.Attendance.route) { AttendanceScreen() }
-                composable(Screen.Reports.route) { ReportsScreen() }
-                composable(Screen.Settings.route) { /* Settings Screen UI */ }
+            NavHost(
+                navController = navController,
+                startDestination = Screen.MainScreen.Dashboard.route,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                composable(Screen.MainScreen.Dashboard.route) { DashboardScreen() }
+                composable(Screen.MainScreen.Employees.route) { EmployeeScreen() }
+                composable(Screen.MainScreen.Attendance.route) { AttendanceScreen() }
+                composable(Screen.MainScreen.Reports.route) { ReportsScreen() }
+                composable(Screen.MainScreen.Settings.route) { /* TODO: SettingsScreen() */ }
             }
         }
     }

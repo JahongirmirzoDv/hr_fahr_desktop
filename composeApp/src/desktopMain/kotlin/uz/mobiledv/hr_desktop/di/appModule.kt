@@ -1,5 +1,6 @@
 package uz.mobiledv.hr_desktop.di
 
+import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.DefaultRequest
@@ -13,11 +14,13 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.core.module.dsl.viewModel
 import uz.mobiledv.hr_desktop.data.remote.api.KtorAuthService
 import uz.mobiledv.hr_desktop.data.remote.api.KtorEmployeeService
 import uz.mobiledv.hr_desktop.data.remote.api.KtorUserService
+import uz.mobiledv.hr_desktop.data.remote.repository.AuthRepository
 import uz.mobiledv.hr_desktop.data.remote.repository.AuthService
 import uz.mobiledv.hr_desktop.data.remote.repository.EmployeeService
 import uz.mobiledv.hr_desktop.data.remote.repository.UserService
@@ -27,18 +30,36 @@ import uz.mobiledv.hr_desktop.screens.auth.AuthViewModel
 import uz.mobiledv.hr_desktop.screens.dashboard.DashboardViewModel
 import uz.mobiledv.hr_desktop.screens.employee.EmployeeViewModel
 import uz.mobiledv.hr_desktop.screens.report.ReportViewModel
+import uz.mobiledv.hr_desktop.utils.AuthSettings
+import uz.mobiledv.hr_desktop.utils.AuthSettingsImpl
+import kotlin.math.sin
 
 const val BASE_URL = "http://localhost:8080"
 val appModule = module {
-    single<UserService> { KtorUserService(get(), get()) }
-    single<EmployeeService> { KtorEmployeeService(get(), get()) }
-    single<AuthService> { KtorAuthService(get(), get()) }
+    single {
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            coerceInputValues = true
+            encodeDefaults = true // Add this line
+        }
+    }
+
+    singleOf<Settings>(::Settings)
+
+    single<UserService> { KtorUserService(get(), BASE_URL) }
+    single<EmployeeService> { KtorEmployeeService(get(), BASE_URL) }
+    single<AuthService> { KtorAuthService(get(), BASE_URL) }
+    single<AuthSettings> { AuthSettingsImpl(get(), get()) }
+
+    singleOf(::AuthRepository)
+
     viewModel { UserViewModel(get()) }
+    viewModel { AuthViewModel(get(), get()) }
     viewModel { DashboardViewModel() }
     viewModel { EmployeeViewModel() }
     viewModel { AttendanceViewModel() }
     viewModel { ReportViewModel() }
-    viewModel { AuthViewModel() }
 
 
     single {
