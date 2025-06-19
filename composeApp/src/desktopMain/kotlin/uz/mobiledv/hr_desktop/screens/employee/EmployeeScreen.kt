@@ -2,6 +2,7 @@ package uz.mobiledv.hr_desktop.screens.employee
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -17,8 +18,9 @@ import androidx.compose.ui.window.Dialog
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.data.model.*
-import uz.mobiledv.hr_desktop.presentation.components.LoadingIndicator
-import uz.mobiledv.hr_desktop.presentation.components.ErrorMessage
+import uz.mobiledv.hr_desktop.screens.components.ErrorMessage
+import uz.mobiledv.hr_desktop.screens.components.LoadingIndicator
+import uz.mobiledv.hr_desktop.screens.components.SearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,7 +135,7 @@ fun EmployeeScreen(
             }
             uiState.error != null -> {
                 ErrorMessage(
-                    message = uiState.error,
+                    message = uiState.error ?: "",
                     onRetry = { viewModel.loadEmployees() }
                 )
             }
@@ -543,7 +545,9 @@ fun AddEmployeeDialog(
 
     FilePicker(show = showFilePicker, fileExtensions = listOf("jpg", "jpeg", "png")) { file ->
         showFilePicker = false
-        file?.let { selectedPhoto = it.readBytes() }
+        file?.let {
+            selectedPhoto = it.readBytes()
+        }
     }
 }
 

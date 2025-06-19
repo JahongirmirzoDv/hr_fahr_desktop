@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
+import uz.mobiledv.hr_desktop.presentation.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(

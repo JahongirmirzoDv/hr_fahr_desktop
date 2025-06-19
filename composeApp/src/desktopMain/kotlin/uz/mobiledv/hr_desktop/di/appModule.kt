@@ -16,8 +16,17 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import uz.mobiledv.hr_desktop.data.network.ApiService
 import uz.mobiledv.hr_desktop.data.network.ApiServiceImpl
-import uz.mobiledv.hr_desktop.data.repository.*
 import uz.mobiledv.hr_desktop.presentation.viewmodel.*
+import uz.mobiledv.hr_desktop.repository.AttendanceRepository
+import uz.mobiledv.hr_desktop.repository.AuthRepository
+import uz.mobiledv.hr_desktop.repository.DashboardRepository
+import uz.mobiledv.hr_desktop.repository.EmployeeRepository
+import uz.mobiledv.hr_desktop.repository.ProjectRepository
+import uz.mobiledv.hr_desktop.repository.SalaryRepository
+import uz.mobiledv.hr_desktop.repository.UserRepository
+import uz.mobiledv.hr_desktop.screens.AuthViewModel
+import uz.mobiledv.hr_desktop.screens.ProjectViewModel
+import uz.mobiledv.hr_desktop.screens.SalaryViewModel
 import uz.mobiledv.hr_desktop.screens.UserViewModel
 import uz.mobiledv.hr_desktop.screens.attendance.AttendanceViewModel
 import uz.mobiledv.hr_desktop.screens.dashboard.DashboardViewModel
@@ -96,7 +105,7 @@ val appModule = module {
     single { DashboardRepository(get()) }
 
     // ViewModels
-    viewModel { uz.mobiledv.hr_desktop.screens.AuthViewModel(get()) }
+    viewModel { AuthViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
     viewModel { EmployeeViewModel(get()) }
     viewModel { UserViewModel(get()) }
@@ -104,5 +113,7 @@ val appModule = module {
     viewModel { SalaryViewModel(get()) }
     viewModel { ProjectViewModel(get()) }
     viewModel { ReportViewModel(get(), get(), get(), get()) }
-    viewModel { SettingsViewModel(get()) }
+
+    // Updated SettingsViewModel with Settings dependency
+    viewModel { SettingsViewModel(get(), get()) }
 }

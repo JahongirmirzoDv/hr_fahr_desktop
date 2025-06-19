@@ -166,7 +166,7 @@ fun AttendanceScreen(
                         }
 
                         // Pagination
-                        if (uiState.totalPages compareTo 1) {
+                        if (uiState.totalPages > 1) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
