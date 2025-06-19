@@ -1,4 +1,4 @@
-package uz.mobiledv.hr_desktop.screens
+package uz.mobiledv.hr_desktop.screens.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import uz.mobiledv.hr_desktop.data.model.User
 import uz.mobiledv.hr_desktop.data.model.UserCreateRequest
 import uz.mobiledv.hr_desktop.repository.AuthRepository
+import uz.mobiledv.hr_desktop.utils.AuthManager
 
 data class AuthUiState(
     val isLoading: Boolean = false,
@@ -16,7 +17,8 @@ data class AuthUiState(
 )
 
 class AuthViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -43,9 +45,15 @@ class AuthViewModel(
             val result = authRepository.login(email, password)
 
             if (result.isSuccess) {
+                val loginResponse = result.getOrThrow()
+
+                // Save user data to AuthManager (additional save if needed)
+                authManager.saveAuthData(loginResponse.token, loginResponse.user)
+
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    isLoggedIn = true
+                    isLoggedIn = true,
+                    currentUser = loginResponse.user
                 )
             } else {
                 _uiState.value = _uiState.value.copy(
@@ -84,5 +92,16 @@ class AuthViewModel(
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
+    }
+
+    // Additional method to update user data in AuthManager
+    fun updateUserData(user: User) {
+        authManager.updateUser(user)
+        _uiState.value = _uiState.value.copy(currentUser = user)
+    }
+
+    // Method to get current user from AuthManager
+    fun getCurrentUser(): User? {
+        return authManager.getCurrentUser()
     }
 }

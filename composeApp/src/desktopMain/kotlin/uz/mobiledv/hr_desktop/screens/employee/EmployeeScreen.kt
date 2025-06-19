@@ -546,7 +546,7 @@ fun AddEmployeeDialog(
     FilePicker(show = showFilePicker, fileExtensions = listOf("jpg", "jpeg", "png")) { file ->
         showFilePicker = false
         file?.let {
-            selectedPhoto = it.readBytes()
+            selectedPhoto = java.io.File(it.path).readBytes()
         }
     }
 }

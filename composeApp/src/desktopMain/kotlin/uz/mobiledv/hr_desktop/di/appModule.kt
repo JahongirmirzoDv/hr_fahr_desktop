@@ -24,7 +24,7 @@ import uz.mobiledv.hr_desktop.repository.EmployeeRepository
 import uz.mobiledv.hr_desktop.repository.ProjectRepository
 import uz.mobiledv.hr_desktop.repository.SalaryRepository
 import uz.mobiledv.hr_desktop.repository.UserRepository
-import uz.mobiledv.hr_desktop.screens.AuthViewModel
+import uz.mobiledv.hr_desktop.screens.auth.AuthViewModel
 import uz.mobiledv.hr_desktop.screens.ProjectViewModel
 import uz.mobiledv.hr_desktop.screens.SalaryViewModel
 import uz.mobiledv.hr_desktop.screens.UserViewModel
@@ -70,20 +70,15 @@ val appModule = module {
                 json(json)
             }
 
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        val token = authManager.getToken()
-                        token?.let {
-                            BearerTokens(accessToken = it, refreshToken = "")
-                        }
-                    }
-                }
-            }
-
             install(DefaultRequest) {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 accept(ContentType.Application.Json)
+
+                // Add Authorization header to all requests
+                val token = authManager.getToken()
+                if (token != null) {
+                    header(HttpHeaders.Authorization, "Bearer $token")
+                }
             }
 
             defaultRequest {
@@ -105,7 +100,7 @@ val appModule = module {
     single { DashboardRepository(get()) }
 
     // ViewModels
-    viewModel { AuthViewModel(get()) }
+    viewModel { AuthViewModel(get(),get()) }
     viewModel { DashboardViewModel(get()) }
     viewModel { EmployeeViewModel(get()) }
     viewModel { UserViewModel(get()) }

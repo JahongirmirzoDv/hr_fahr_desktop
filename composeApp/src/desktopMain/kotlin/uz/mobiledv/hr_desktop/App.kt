@@ -7,13 +7,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.navigation.Screen
 import uz.mobiledv.hr_desktop.presentation.theme.HRDesktopTheme
-import uz.mobiledv.hr_desktop.screens.AuthViewModel
+import uz.mobiledv.hr_desktop.screens.auth.AuthViewModel
 import uz.mobiledv.hr_desktop.screens.ProjectScreen
 import uz.mobiledv.hr_desktop.screens.SettingsScreen
 import uz.mobiledv.hr_desktop.screens.UserScreen

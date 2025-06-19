@@ -43,8 +43,6 @@ data class User(
     val fullName: String,
     val email: String,
     val role: String,
-    val createdAt: String,
-    val updatedAt: String
 )
 
 @Serializable

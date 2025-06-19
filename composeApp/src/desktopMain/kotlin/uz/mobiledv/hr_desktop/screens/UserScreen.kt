@@ -302,11 +302,11 @@ fun UserRow(
                 )
             }
             
-            Text(
-                text = user.createdAt.substring(0, 10), // Show only date part
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f)
-            )
+//            Text(
+//                text = user.createdAt.substring(0, 10), // Show only date part
+//                style = MaterialTheme.typography.bodyMedium,
+//                modifier = Modifier.weight(1f)
+//            )
             
             // Action Buttons
             Row(

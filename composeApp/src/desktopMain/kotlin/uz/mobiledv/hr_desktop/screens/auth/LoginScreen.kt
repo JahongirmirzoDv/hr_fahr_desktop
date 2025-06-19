@@ -25,7 +25,6 @@ import androidx.navigation.NavController
 import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.data.model.UserCreateRequest
 import uz.mobiledv.hr_desktop.navigation.Screen
-import uz.mobiledv.hr_desktop.screens.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
