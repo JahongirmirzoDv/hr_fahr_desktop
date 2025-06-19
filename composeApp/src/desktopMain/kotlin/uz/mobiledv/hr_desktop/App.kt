@@ -14,6 +14,8 @@ import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.navigation.Screen
 import uz.mobiledv.hr_desktop.presentation.theme.HRDesktopTheme
 import uz.mobiledv.hr_desktop.screens.AuthViewModel
+import uz.mobiledv.hr_desktop.screens.ProjectScreen
+import uz.mobiledv.hr_desktop.screens.SettingsScreen
 import uz.mobiledv.hr_desktop.screens.UserScreen
 import uz.mobiledv.hr_desktop.screens.attendance.AttendanceScreen
 import uz.mobiledv.hr_desktop.screens.auth.LoginScreen
@@ -23,8 +25,9 @@ import uz.mobiledv.hr_desktop.screens.report.ReportsScreen
 import uz.mobiledv.hr_desktop.screens.salary.SalaryScreen
 
 @Composable
-fun App(authViewModel: AuthViewModel = koinInject()) {
+fun App() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = koinInject()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
     HRDesktopTheme {
@@ -155,5 +158,4 @@ fun getMainScreensForRole(role: String): List<Screen.MainScreen> {
         Screen.MainScreen.Reports,
         Screen.MainScreen.Settings
     )
-
 }
