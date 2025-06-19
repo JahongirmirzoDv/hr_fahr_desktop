@@ -11,7 +11,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.navigation.Screen
-import uz.mobiledv.hr_desktop.presentation.theme.HRDesktopTheme
+import uz.mobiledv.ui.HRDesktopTheme
 import uz.mobiledv.hr_desktop.screens.auth.AuthViewModel
 import uz.mobiledv.hr_desktop.screens.ProjectScreen
 import uz.mobiledv.hr_desktop.screens.SettingsScreen
@@ -29,7 +29,7 @@ fun App() {
     val authViewModel: AuthViewModel = koinInject()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
-    HRDesktopTheme {
+    HRDesktopTheme(darkTheme = true) {
         NavHost(
             navController = navController,
             startDestination = if (isLoggedIn) Screen.MainRoute.route else Screen.AuthRoute.route

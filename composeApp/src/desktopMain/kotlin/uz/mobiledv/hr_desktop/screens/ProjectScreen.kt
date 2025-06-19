@@ -23,6 +23,7 @@ import uz.mobiledv.hr_desktop.screens.ProjectViewModel
 import uz.mobiledv.hr_desktop.screens.components.ErrorMessage
 import uz.mobiledv.hr_desktop.screens.components.LoadingIndicator
 import uz.mobiledv.hr_desktop.screens.components.SearchBar
+import uz.mobiledv.hr_desktop.screens.components.StatusBadge
 
 @Composable
 fun ProjectScreen(
@@ -285,6 +286,7 @@ private fun ProjectRow(
         )
         
         // Status Badge
+
         Surface(
             color = when (project.status) {
                 "ACTIVE" -> Color.Green.copy(alpha = 0.1f)
@@ -309,6 +311,12 @@ private fun ProjectRow(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
+
+        StatusBadge(
+            text = project.status,
+            status = project.status,
+            modifier = Modifier.weight(1f)
+        )
         
         Text(
             text = project.startDate?.substring(0, 10) ?: "N/A",
