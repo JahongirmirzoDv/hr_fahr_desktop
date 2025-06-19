@@ -1,23 +1,13 @@
 package uz.mobiledv.hr_desktop.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Login
-import androidx.compose.material.icons.filled.Assessment
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Login
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
-import androidx.compose.material.icons.filled.*
 sealed class Screen(val route: String) {
+    object AuthRoute : Screen("auth")
+    object MainRoute : Screen("main")
 
-    // Top-level routes for navigation structure
-    object AuthRoute : Screen("auth_route")
-    object MainRoute : Screen("main_route")
-
-    // Visible screens in the NavigationRail
     sealed class MainScreen(
         route: String,
         val label: String,
@@ -25,20 +15,13 @@ sealed class Screen(val route: String) {
     ) : Screen(route) {
         object Dashboard : MainScreen("dashboard", "Dashboard", Icons.Default.Dashboard)
         object Employees : MainScreen("employees", "Employees", Icons.Default.People)
+        object Users : MainScreen("users", "Users", Icons.Default.PersonAdd)
         object Attendance : MainScreen("attendance", "Attendance", Icons.Default.DateRange)
+        object Salary : MainScreen("salary", "Salary", Icons.Default.AttachMoney)
+        object Projects : MainScreen("projects", "Projects", Icons.Default.Work)
         object Reports : MainScreen("reports", "Reports", Icons.Default.Assessment)
         object Settings : MainScreen("settings", "Settings", Icons.Default.Settings)
     }
 
-    // Login screen
     object Login : Screen("login")
 }
-
-
-val mainScreens = listOf(
-    Screen.MainScreen.Dashboard,
-    Screen.MainScreen.Employees,
-    Screen.MainScreen.Attendance,
-    Screen.MainScreen.Reports,
-    Screen.MainScreen.Settings
-)

@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.ktor.serialization.json)
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.logging)
+            implementation(libs.ktor.auth)
 
             implementation(libs.kotlinx.coroutines.core)
 
@@ -49,6 +50,19 @@ kotlin {
             implementation(libs.multiplatformSettings.noArg) // Common dependency
             implementation(libs.multiplatformSettings.coroutines) // Optional for coroutines support
 
+
+            // File picker
+            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+
+            // Charts for reports
+            implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+            // Image loading
+            implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+            implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
+
+            // Pagination
+            implementation("app.cash.paging:paging-compose-common:3.3.0-alpha02-0.4.0")
 
             implementation("org.apache.logging.log4j:log4j-api:2.20.0")
             implementation("org.apache.logging.log4j:log4j-core:2.20.0")
@@ -72,8 +86,21 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "uz.mobiledv.hr_desktop"
+            packageName = "HR FAHR Desktop"
             packageVersion = "1.0.0"
+            description = "Complete HR Management System"
+            vendor = "Mobile DV"
+
+            macOS {
+                bundleID = "uz.mobiledv.hr_desktop"
+                iconFile.set(project.file("src/desktopMain/resources/icon.icns"))
+            }
+
+            windows {
+                iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
+                menuGroup = "HR FAHR"
+                upgradeUuid = "hr-fahr-desktop"
+            }
         }
     }
 }

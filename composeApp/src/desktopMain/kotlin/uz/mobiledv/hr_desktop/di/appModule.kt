@@ -4,67 +4,52 @@ import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.HttpSendPipeline
-import io.ktor.client.request.accept
-import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.header
-import io.ktor.client.request.request
+import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import uz.mobiledv.hr_desktop.data.remote.api.KtorAuthService
-import uz.mobiledv.hr_desktop.data.remote.api.KtorEmployeeService
-import uz.mobiledv.hr_desktop.data.remote.api.KtorUserService
-import uz.mobiledv.hr_desktop.data.remote.repository.AuthRepository
-import uz.mobiledv.hr_desktop.data.remote.repository.AuthService
-import uz.mobiledv.hr_desktop.data.remote.repository.EmployeeService
-import uz.mobiledv.hr_desktop.data.remote.repository.UserService
+import uz.mobiledv.hr_desktop.data.network.ApiService
+import uz.mobiledv.hr_desktop.data.network.ApiServiceImpl
+import uz.mobiledv.hr_desktop.data.repository.*
+import uz.mobiledv.hr_desktop.presentation.viewmodel.*
 import uz.mobiledv.hr_desktop.screens.UserViewModel
 import uz.mobiledv.hr_desktop.screens.attendance.AttendanceViewModel
-import uz.mobiledv.hr_desktop.screens.auth.AuthViewModel
 import uz.mobiledv.hr_desktop.screens.dashboard.DashboardViewModel
 import uz.mobiledv.hr_desktop.screens.employee.EmployeeViewModel
 import uz.mobiledv.hr_desktop.screens.report.ReportViewModel
-import uz.mobiledv.hr_desktop.utils.AuthSettings
-import uz.mobiledv.hr_desktop.utils.AuthSettingsImpl
+import uz.mobiledv.hr_desktop.utils.AuthManager
 
 const val BASE_URL = "http://localhost:8080"
 
 val appModule = module {
 
+    // JSON Configuration
     single {
         Json {
             ignoreUnknownKeys = true
             isLenient = true
             coerceInputValues = true
             encodeDefaults = true
+            prettyPrint = true
         }
     }
 
+    // Settings
     single<Settings> { Settings() }
 
-    single<UserService> { KtorUserService(get(), BASE_URL) }
-    single<EmployeeService> { KtorEmployeeService(get(), BASE_URL) }
-    single<AuthService> { KtorAuthService(get(), BASE_URL) }
-    single<AuthSettings> { AuthSettingsImpl(get(), get()) }
+    // Auth Manager
+    single { AuthManager(get()) }
 
-    singleOf(::AuthRepository)
-
-    viewModel { UserViewModel(get()) }
-    viewModel { AuthViewModel(get(), get()) }
-    viewModel { DashboardViewModel(get(),get()) }
-    viewModel { EmployeeViewModel(get()) }
-    viewModel { AttendanceViewModel() }
-    viewModel { ReportViewModel() }
-
+    // HTTP Client
     single {
         val json: Json = get()
-        val authSettings: AuthSettings = get()
+        val authManager: AuthManager = get()
 
         HttpClient(CIO) {
             install(Logging) {
@@ -76,16 +61,48 @@ val appModule = module {
                 json(json)
             }
 
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        val token = authManager.getToken()
+                        token?.let {
+                            BearerTokens(accessToken = it, refreshToken = "")
+                        }
+                    }
+                }
+            }
+
             install(DefaultRequest) {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 accept(ContentType.Application.Json)
+            }
 
-                // ✅ Add the bearer token (one-time at creation)
-                val token = authSettings.getCurrentUser()?.token
-                if (!token.isNullOrBlank()) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                }
+            defaultRequest {
+                url(BASE_URL)
             }
         }
     }
+
+    // API Service
+    single<ApiService> { ApiServiceImpl(get(), BASE_URL) }
+
+    // Repositories
+    single { AuthRepository(get(), get()) }
+    single { EmployeeRepository(get()) }
+    single { UserRepository(get()) }
+    single { AttendanceRepository(get()) }
+    single { SalaryRepository(get()) }
+    single { ProjectRepository(get()) }
+    single { DashboardRepository(get()) }
+
+    // ViewModels
+    viewModel { uz.mobiledv.hr_desktop.screens.AuthViewModel(get()) }
+    viewModel { DashboardViewModel(get()) }
+    viewModel { EmployeeViewModel(get()) }
+    viewModel { UserViewModel(get()) }
+    viewModel { AttendanceViewModel(get()) }
+    viewModel { SalaryViewModel(get()) }
+    viewModel { ProjectViewModel(get()) }
+    viewModel { ReportViewModel(get(), get(), get(), get()) }
+    viewModel { SettingsViewModel(get()) }
 }

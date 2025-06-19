@@ -9,7 +9,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import uz.mobiledv.hr_desktop.data.remote.model.AuthDto
 import uz.mobiledv.hr_desktop.data.remote.model.LoginRequest
-import uz.mobiledv.hr_desktop.data.remote.repository.AuthService
 
 class KtorAuthService(
     private val client: HttpClient,

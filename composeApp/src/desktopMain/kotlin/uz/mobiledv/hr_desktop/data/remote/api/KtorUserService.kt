@@ -10,7 +10,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import uz.mobiledv.hr_desktop.data.remote.repository.UserService
 
 class KtorUserService(
     private val client: HttpClient,

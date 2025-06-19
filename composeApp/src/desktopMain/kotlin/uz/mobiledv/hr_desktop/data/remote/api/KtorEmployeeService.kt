@@ -13,7 +13,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import uz.mobiledv.hr_desktop.data.remote.model.EmployeeDto
-import uz.mobiledv.hr_desktop.data.remote.repository.EmployeeService
 
 class KtorEmployeeService(
     private val client: HttpClient,
