@@ -12,12 +12,15 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import org.koin.compose.koinInject
 import uz.mobiledv.hr_desktop.navigation.Screen
+import uz.mobiledv.hr_desktop.presentation.theme.HRDesktopTheme
 import uz.mobiledv.hr_desktop.screens.AuthViewModel
+import uz.mobiledv.hr_desktop.screens.UserScreen
 import uz.mobiledv.hr_desktop.screens.attendance.AttendanceScreen
 import uz.mobiledv.hr_desktop.screens.auth.LoginScreen
 import uz.mobiledv.hr_desktop.screens.dashboard.DashboardScreen
 import uz.mobiledv.hr_desktop.screens.employee.EmployeeScreen
-import uz.mobiledv.ui.HRDesktopTheme
+import uz.mobiledv.hr_desktop.screens.report.ReportsScreen
+import uz.mobiledv.hr_desktop.screens.salary.SalaryScreen
 
 @Composable
 fun App(authViewModel: AuthViewModel = koinInject()) {
@@ -131,7 +134,7 @@ fun MainScreen(authViewModel: AuthViewModel) {
                     ProjectScreen()
                 }
                 composable(Screen.MainScreen.Reports.route) {
-                    ReportScreen()
+                    ReportsScreen()
                 }
                 composable(Screen.MainScreen.Settings.route) {
                     SettingsScreen()

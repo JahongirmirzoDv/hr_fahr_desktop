@@ -6,105 +6,105 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import uz.mobiledv.hr_desktop.data.model.User
-import uz.mobiledv.hr_desktop.data.model.UserCreateRequest
-import uz.mobiledv.hr_desktop.repository.UserRepository
+import uz.mobiledv.hr_desktop.data.model.Project
+import uz.mobiledv.hr_desktop.data.model.ProjectCreateRequest
+import uz.mobiledv.hr_desktop.repository.ProjectRepository
 
-data class UserUiState(
-    val users: List<User> = emptyList(),
+data class ProjectUiState(
+    val projects: List<Project> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val selectedUser: User? = null
+    val selectedProject: Project? = null
 )
 
-class UserViewModel(
-    private val userRepository: UserRepository
+class ProjectViewModel(
+    private val projectRepository: ProjectRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UserUiState())
-    val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ProjectUiState())
+    val uiState: StateFlow<ProjectUiState> = _uiState.asStateFlow()
 
     init {
-        loadUsers()
+        loadProjects()
     }
 
-    fun loadUsers() {
+    fun loadProjects() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-
-            val result = userRepository.getAllUsers()
-
+            
+            val result = projectRepository.getAllProjects()
+            
             if (result.isSuccess) {
                 _uiState.value = _uiState.value.copy(
-                    users = result.getOrThrow(),
+                    projects = result.getOrThrow(),
                     isLoading = false
                 )
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = result.exceptionOrNull()?.message ?: "Failed to load users"
+                    error = result.exceptionOrNull()?.message ?: "Failed to load projects"
                 )
             }
         }
     }
 
-    fun createUser(user: UserCreateRequest) {
+    fun createProject(project: ProjectCreateRequest) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-
-            val result = userRepository.createUser(user)
-
+            
+            val result = projectRepository.createProject(project)
+            
             if (result.isSuccess) {
-                loadUsers() // Refresh the list
+                loadProjects() // Refresh the list
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = result.exceptionOrNull()?.message ?: "Failed to create user"
+                    error = result.exceptionOrNull()?.message ?: "Failed to create project"
                 )
             }
         }
     }
 
-    fun updateUser(id: String, user: UserCreateRequest) {
+    fun updateProject(id: String, project: ProjectCreateRequest) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-
-            val result = userRepository.updateUser(id, user)
-
+            
+            val result = projectRepository.updateProject(id, project)
+            
             if (result.isSuccess) {
-                loadUsers() // Refresh the list
+                loadProjects() // Refresh the list
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = result.exceptionOrNull()?.message ?: "Failed to update user"
+                    error = result.exceptionOrNull()?.message ?: "Failed to update project"
                 )
             }
         }
     }
 
-    fun deleteUser(id: String) {
+    fun deleteProject(id: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-
-            val result = userRepository.deleteUser(id)
-
+            
+            val result = projectRepository.deleteProject(id)
+            
             if (result.isSuccess) {
-                loadUsers() // Refresh the list
+                loadProjects() // Refresh the list
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = result.exceptionOrNull()?.message ?: "Failed to delete user"
+                    error = result.exceptionOrNull()?.message ?: "Failed to delete project"
                 )
             }
         }
     }
 
-    fun selectUser(user: User) {
-        _uiState.value = _uiState.value.copy(selectedUser = user)
+    fun selectProject(project: Project) {
+        _uiState.value = _uiState.value.copy(selectedProject = project)
     }
 
     fun clearSelection() {
-        _uiState.value = _uiState.value.copy(selectedUser = null)
+        _uiState.value = _uiState.value.copy(selectedProject = null)
     }
 
     fun clearError() {
