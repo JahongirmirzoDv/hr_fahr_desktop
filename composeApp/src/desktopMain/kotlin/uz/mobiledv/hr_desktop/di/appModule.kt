@@ -1,22 +1,22 @@
 package uz.mobiledv.hr_desktop.di
 
 import com.russhwolf.settings.Settings
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.DEFAULT
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.HttpSendPipeline
+import io.ktor.client.request.accept
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.header
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.request.request
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
 import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 import uz.mobiledv.hr_desktop.data.remote.api.KtorAuthService
 import uz.mobiledv.hr_desktop.data.remote.api.KtorEmployeeService
 import uz.mobiledv.hr_desktop.data.remote.api.KtorUserService
@@ -32,20 +32,21 @@ import uz.mobiledv.hr_desktop.screens.employee.EmployeeViewModel
 import uz.mobiledv.hr_desktop.screens.report.ReportViewModel
 import uz.mobiledv.hr_desktop.utils.AuthSettings
 import uz.mobiledv.hr_desktop.utils.AuthSettingsImpl
-import kotlin.math.sin
 
 const val BASE_URL = "http://localhost:8080"
+
 val appModule = module {
+
     single {
         Json {
             ignoreUnknownKeys = true
             isLenient = true
             coerceInputValues = true
-            encodeDefaults = true // Add this line
+            encodeDefaults = true
         }
     }
 
-    singleOf<Settings>(::Settings)
+    single<Settings> { Settings() }
 
     single<UserService> { KtorUserService(get(), BASE_URL) }
     single<EmployeeService> { KtorEmployeeService(get(), BASE_URL) }
@@ -56,31 +57,34 @@ val appModule = module {
 
     viewModel { UserViewModel(get()) }
     viewModel { AuthViewModel(get(), get()) }
-    viewModel { DashboardViewModel() }
-    viewModel { EmployeeViewModel() }
+    viewModel { DashboardViewModel(get(),get()) }
+    viewModel { EmployeeViewModel(get()) }
     viewModel { AttendanceViewModel() }
     viewModel { ReportViewModel() }
 
-
     single {
-        HttpClient(CIO) { // You can choose other engines like OkHttp or Java
-            // Logging for HTTP requests and responses
+        val json: Json = get()
+        val authSettings: AuthSettings = get()
+
+        HttpClient(CIO) {
             install(Logging) {
                 logger = Logger.DEFAULT
-                level = LogLevel.ALL // Log everything, adjust as needed for production
+                level = LogLevel.ALL
             }
-            // Content negotiation for JSON serialization/deserialization
+
             install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true // Important for API evolution
-                })
+                json(json)
             }
-            // Default request configuration (e.g., base URL, headers) can be set here
+
             install(DefaultRequest) {
-                url(BASE_URL)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+
+                // ✅ Add the bearer token (one-time at creation)
+                val token = authSettings.getCurrentUser()?.token
+                if (!token.isNullOrBlank()) {
+                    header(HttpHeaders.Authorization, "Bearer $token")
+                }
             }
         }
     }

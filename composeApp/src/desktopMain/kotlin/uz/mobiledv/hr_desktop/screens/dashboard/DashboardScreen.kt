@@ -1,7 +1,12 @@
 package uz.mobiledv.hr_desktop.screens.dashboard
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +17,13 @@ import org.koin.compose.koinInject
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel = koinInject()) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.End) {
+            IconButton(onClick = {
+                viewModel.logOut()
+            }) {
+                Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
+            }
+        }
         Text("Dashboard", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(24.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {

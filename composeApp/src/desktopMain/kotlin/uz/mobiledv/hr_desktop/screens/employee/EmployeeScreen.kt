@@ -19,14 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
+import uz.mobiledv.hr_desktop.data.remote.model.EmployeeDto
 
 @Composable
 fun EmployeeScreen(viewModel: EmployeeViewModel = koinInject()) {
-    val employees = listOf(
-        Employee("Ethan Carter", "Engineering", "Software Engineer", "Active"),
-        Employee("Olivia Bennett", "Marketing", "Marketing Manager", "Active"),
-        // ... add more employees
-    )
+    val employees = viewModel.allEmployees.value
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Employees", style = MaterialTheme.typography.headlineMedium)
@@ -40,11 +37,10 @@ fun EmployeeScreen(viewModel: EmployeeViewModel = koinInject()) {
     }
 }
 
-data class Employee(val name: String, val department: String, val role: String, val status: String)
 
 
 @Composable
-fun EmployeeRow(employee: Employee) {
+fun EmployeeRow(employee: EmployeeDto) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -53,8 +49,8 @@ fun EmployeeRow(employee: Employee) {
         ) {
             Text(employee.name, modifier = Modifier.weight(1f))
             Text(employee.department, modifier = Modifier.weight(1f))
-            Text(employee.role, modifier = Modifier.weight(1f))
-            Button(onClick = {}) { Text(employee.status) }
+            Text(employee.department, modifier = Modifier.weight(1f))
+            Button(onClick = {}) { Text(employee.position) }
         }
     }
 }

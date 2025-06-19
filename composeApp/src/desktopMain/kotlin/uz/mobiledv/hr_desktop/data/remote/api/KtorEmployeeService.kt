@@ -21,19 +21,34 @@ class KtorEmployeeService(
 ) : EmployeeService {
 
     override suspend fun getAll(): List<EmployeeDto> {
-        return client.get("$baseUrl/admin/employees").body()
+        return try {
+            client.get("$baseUrl/admin/employees").body()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
     override suspend fun create(employee: EmployeeDto): Boolean {
-        val res = client.post("$baseUrl/admin/employees") {
-            contentType(ContentType.Application.Json)
-            setBody(employee)
+        return try {
+            val response = client.post("$baseUrl/admin/employees") {
+                contentType(ContentType.Application.Json)
+                setBody(employee)
+            }
+            response.status == HttpStatusCode.Created
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
-        return res.status == HttpStatusCode.Created
     }
 
     override suspend fun delete(id: String): Boolean {
-        val res = client.delete("$baseUrl/admin/employees/$id")
-        return res.status == HttpStatusCode.OK
+        return try {
+            val response = client.delete("$baseUrl/admin/employees/$id")
+            response.status == HttpStatusCode.OK
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 }

@@ -8,16 +8,17 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import uz.mobiledv.hr_desktop.data.remote.model.AuthDto
+import uz.mobiledv.hr_desktop.data.remote.model.LoginRequest
 import uz.mobiledv.hr_desktop.data.remote.repository.AuthService
 
 class KtorAuthService(
     private val client: HttpClient,
     private val baseUrl: String
 ): AuthService {
-    override suspend fun login(email: String, password: String): AuthDto {
+    override suspend fun login(loginRequest: LoginRequest): AuthDto {
         val response: HttpResponse = client.post("$baseUrl/auth/login") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("email" to email, "password" to password))
+            setBody(loginRequest)
         }
         val authData: AuthDto = response.body()
         return authData
